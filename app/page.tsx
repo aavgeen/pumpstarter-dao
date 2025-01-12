@@ -12,7 +12,6 @@ import Header from "@/components/header";
 export default function Home() {
   return (
     <div className="max-w-6xl mx-auto">
-      <Header />
       <FadeIn>
         <section className="text-center py-12">
           <SlideInFromLeft>

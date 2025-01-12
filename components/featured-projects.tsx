@@ -22,7 +22,7 @@ const featuredProjects = [
   },
   {
     id: 3,
-    title: "DeFi Lending Protocol",
+    title: "DeFi Lending Protocol Project",
     description: "A decentralized lending platform with innovative yield strategies.",
     raised: 120000,
     goal: 150000,
