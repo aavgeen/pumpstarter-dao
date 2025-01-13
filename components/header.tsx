@@ -11,11 +11,11 @@ export default function Header() {
 
   return (
     <header className="border-b">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
         <Link href="/" className="text-2xl font-bold">
           PumpStarter.dao
         </Link>
-        <nav className="flex items-center space-x-4">
+        <nav className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
           <Button size="sm" variant="ghost">
             <Link href="/projects" className="text-sm font-medium">
               Explore

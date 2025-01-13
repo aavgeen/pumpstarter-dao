@@ -7,11 +7,10 @@ import {
   SlideInFromRight,
 } from "@/components/motion/primitives";
 import Link from "next/link";
-import Header from "@/components/header";
 
 export default function Home() {
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto px-4">
       <FadeIn>
         <section className="text-center py-12">
           <SlideInFromLeft>
@@ -26,7 +25,7 @@ export default function Home() {
             </p>
           </SlideInFromRight>
           <FadeInStagger faster>
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-col md:flex-row justify-center gap-4">
               <Button size="lg">Explore Projects</Button>
               <Button size="lg" variant="outline">
                 <Link href="/create-project">Start a Project</Link>
