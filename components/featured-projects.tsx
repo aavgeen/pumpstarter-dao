@@ -1,36 +1,62 @@
-import Link from 'next/link'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
-
-const featuredProjects = [
-  {
-    id: 1,
-    title: "Decentralized Social Network",
-    description: "A blockchain-based social network that puts privacy first.",
-    raised: 75000,
-    goal: 100000,
-    daysLeft: 15,
-  },
-  {
-    id: 2,
-    title: "Green Energy NFT Marketplace",
-    description: "Trade carbon credits as NFTs and support renewable energy projects.",
-    raised: 50000,
-    goal: 80000,
-    daysLeft: 20,
-  },
-  {
-    id: 3,
-    title: "DeFi Lending Protocol Project",
-    description: "A decentralized lending platform with innovative yield strategies.",
-    raised: 120000,
-    goal: 150000,
-    daysLeft: 10,
-  },
-]
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { useProjects } from "@/hooks/use-projects";
 
 export default function FeaturedProjects() {
+  const { projects, loading, error } = useProjects();
+
+  if (loading) {
+    return (
+      <section className="py-12">
+        <h2 className="text-3xl font-bold mb-8 text-center">
+          Featured Projects
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-8 bg-muted rounded" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-16 bg-muted rounded mb-4" />
+                <div className="h-2 bg-muted rounded mb-2" />
+                <div className="flex justify-between">
+                  <div className="h-4 w-20 bg-muted rounded" />
+                  <div className="h-4 w-20 bg-muted rounded" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <div className="h-10 w-full bg-muted rounded" />
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-12">
+        <h2 className="text-3xl font-bold mb-8 text-center">
+          Featured Projects
+        </h2>
+        <div className="text-center text-red-500">Failed to load projects</div>
+      </section>
+    );
+  }
+
+  // Take the first 3 projects as featured
+  const featuredProjects = projects.slice(0, 3);
+
   return (
     <section className="py-12">
       <h2 className="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
@@ -41,11 +67,24 @@ export default function FeaturedProjects() {
               <CardTitle>{project.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">{project.description}</p>
-              <Progress value={(project.raised / project.goal) * 100} className="mb-2" />
+              <p className="text-sm text-muted-foreground mb-4">
+                {project.shortDescription}
+              </p>
+              <Progress
+                value={(project.funding.current / project.funding.goal) * 100}
+                className="mb-2"
+              />
               <div className="flex justify-between text-sm">
-                <span>{Math.round((project.raised / project.goal) * 100)}% funded</span>
-                <span>{project.daysLeft} days left</span>
+                <span>
+                  {Math.round(
+                    (project.funding.current / project.funding.goal) * 100
+                  )}
+                  % funded
+                </span>
+                <span>
+                  {new Date(project.funding.endDate).toLocaleDateString()}{" "}
+                  deadline
+                </span>
               </div>
             </CardContent>
             <CardFooter>
@@ -57,6 +96,5 @@ export default function FeaturedProjects() {
         ))}
       </div>
     </section>
-  )
+  );
 }
-

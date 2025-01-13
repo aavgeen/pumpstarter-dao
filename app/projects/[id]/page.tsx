@@ -1,7 +1,7 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useAccount, useWriteContract, useSimulateContract } from "wagmi";
 import { parseEther } from "viem";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
@@ -28,7 +28,7 @@ import {
   SlideInFromRight,
   ScaleIn,
 } from "@/components/motion/primitives";
-import { projects, type Project } from "@/lib/data";
+import { useProject } from "@/hooks/use-projects";
 
 // Navigation items
 const navItems = [
@@ -50,27 +50,77 @@ const contractABI = [
 ] as const;
 
 export default function ProjectDashboard() {
-  const searchParams = useSearchParams();
-  const projectId = searchParams.get("id") || "1";
-  const project = projects.find(p => p.id === projectId) as Project;
+  const params = useParams();
+  const projectId = typeof params.id === 'string' ? params.id : '1';
+  const { project, loading, error } = useProject(projectId);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");
-
   const { address, isConnected } = useAccount();
-
+  
+  // Move these hooks before any conditional returns
   const { data: simulateData } = useSimulateContract({
-    address: project.contractAddress as `0x${string}`,
+    address: project?.contractAddress as `0x${string}` ?? '0x0',
     abi: contractABI,
     functionName: "contribute",
     value: contributionAmount ? parseEther(contributionAmount) : undefined,
+    // enabled: !!project?.contractAddress && !!contributionAmount,
   });
 
   const { writeContract, isPending, isSuccess } = useWriteContract();
+
+  useEffect(() => {
+    if (contributionAmount) {
+      // Trigger any side effects or validations here if needed
+    }
+  }, [contributionAmount]);
 
   const handleContribute = async () => {
     if (!simulateData?.request) return;
     writeContract(simulateData.request);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground px-4">
+        <div className="animate-pulse">
+          <Card className="p-4 mb-6">
+            <div className="h-8 bg-muted rounded mb-4" />
+            <div className="h-4 bg-muted rounded w-1/4" />
+          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <Card className="p-6 mb-6">
+                <div className="h-32 bg-muted rounded" />
+              </Card>
+              <Card className="p-6 mb-6">
+                <div className="h-64 bg-muted rounded" />
+              </Card>
+            </div>
+            <div className="lg:col-span-1">
+              <Card className="p-6">
+                <div className="space-y-4">
+                  <div className="h-8 bg-muted rounded" />
+                  <div className="h-8 bg-muted rounded" />
+                  <div className="h-8 bg-muted rounded" />
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !project) {
+    return (
+      <div className="min-h-screen bg-background text-foreground px-4">
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-semibold mb-4">Error</h1>
+          <p className="text-muted-foreground">Failed to load project details</p>
+        </div>
+      </div>
+    );
+  }
 
   const fundingProgress = (project.funding.current / project.funding.goal) * 100;
 
@@ -88,7 +138,7 @@ export default function ProjectDashboard() {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-sm text-muted-foreground">Created by</div>
-            <div className="font-medium">{project.creator.name}</div>
+            <div className="font-medium">{project.creator.name || 'Anonymous'}</div>
           </div>
           <ConnectButton />
         </div>
@@ -324,5 +374,5 @@ export default function ProjectDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
