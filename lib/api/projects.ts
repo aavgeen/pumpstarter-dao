@@ -4,7 +4,7 @@ import mockProjects from './mock-data.json'
 
 export async function getProjects(): Promise<ApiResponse<Project[]>> {
   if (API_CONFIG.USE_MOCK_DATA) {
-    return { data: mockProjects.projects }
+    return { data: mockProjects.projects as Project[] }
   }
 
   try {
@@ -47,6 +47,7 @@ export async function createProject(input: CreateProjectInput): Promise<ApiRespo
       contractAddress: '0x' + Math.random().toString(16).substring(2, 10) + '...' + Math.random().toString(16).substring(2, 10),
       creator: {
         address: '0x' + Math.random().toString(16).substring(2, 10) + '...' + Math.random().toString(16).substring(2, 10),
+        name: input.creatorName || '',
       },
       funding: {
         current: 0,
@@ -60,7 +61,7 @@ export async function createProject(input: CreateProjectInput): Promise<ApiRespo
       tags: input.tags,
       imageUrl: '/placeholder.jpg',
     }
-    mockProjects.projects.push(newProject)
+    mockProjects.projects.push(newProject);
     return { data: newProject }
   }
 

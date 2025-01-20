@@ -6,7 +6,7 @@ export interface Project {
   contractAddress: string;
   creator: {
     address: string;
-    name?: string; // Optional name
+    name: string;
   };
   funding: {
     current: number;
@@ -40,6 +40,7 @@ export interface CreateProjectInput {
   fundingGoal: number;
   category: string;
   tags: string[];
+  creatorName: string;
   endDate: string;
 }
 
