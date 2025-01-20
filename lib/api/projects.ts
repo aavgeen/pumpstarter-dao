@@ -21,7 +21,7 @@ export async function getProjects(): Promise<ApiResponse<Project[]>> {
 
 export async function getProject(id: string): Promise<ApiResponse<Project | null>> {
   if (API_CONFIG.USE_MOCK_DATA) {
-    const project = mockProjects.projects.find(p => p.id === id)
+    const project: Project = mockProjects.projects.find(p => p.id === id) as Project;
     return { data: project || null }
   }
 
